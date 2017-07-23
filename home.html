@@ -29,13 +29,19 @@
   
   					</div>
   				<h1> Where will you go? </h1>
-				<input placeholder="FROM" id='origin'></input>
-				<input placeholder="TO" id="destination"></input>
+				<input placeholder="FROM" type="text" id='origin' list="originAutocomplete"></input>
+				<datalist id="originAutocomplete">
+				
+				</datalist>
+				<input placeholder="TO" id="destination" list="destinationAutocomplete"></input>
+				<datalist id="destinationAutocomplete">
+				
+				</datalist>
 				<input id="date" type="date"></input>
 				<button type="button" id="fly-button">Let's Fly!</button>
 
 			</div>
-		
+
 		<div class="destination-info">
 			<h1 class="city-name">Boston, MA</h1>
 		</div>

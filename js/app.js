@@ -70,7 +70,7 @@ var originAutocomplete = function (query) {
   var request = $.ajax({
     url:  'https://iatacodes.org/api/v6/autocomplete?query=' + query + '&api_key=beb637d9-aeed-4a1f-9dbc-4a98218fa7c8',
     contentType: "application/json",
-    origin: 'https://fast-tor-62636.herokuapp.com',
+    Origin: 'https://fast-tor-62636.herokuapp.com',
     success: appendAutocomplete
   });
 

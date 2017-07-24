@@ -56,6 +56,14 @@
 
   // } 
 
+// compile HTML/Handlebars function
+var compileHtml = function (flightsHtml) {
+  var flightTemplate = $('#flights-template').html();
+  var flightScript = Handlebars.compile(flightTemplate);
+  return flightScript(flightsHtml);
+
+}
+
 
 // on Keyup search for a location
 
@@ -69,7 +77,6 @@ $('#origin').on('keyup', function(){
 
 $('#destination').on('keyup', function(){
   var query = $('#destination').val();
-  
   if (query.length > 1) {
   destinationAutocomplete(query);
 }
@@ -98,7 +105,7 @@ var appendOrigin = function(data) {
     var airportCode = airports[i].code;
     var airportCountry = airports[i].country_name;
     var airportName = airports[i].name;
-    $('#originAutocomplete').append('<option>' + airportName + ' (' + airportCode + ") , " + airportCountry + '</option>');
+    $('#originAutocomplete').append('<option value="' + airportCode +'">' + airportName + ' (' + airportCode + ") , " + airportCountry + '</option>');
     }
  
 }
@@ -122,12 +129,66 @@ var appendDestination = function(data) {
     var airportCode = airports[i].code;
     var airportCountry = airports[i].country_name;
     var airportName = airports[i].name;
-    $('#destinationAutocomplete').append('<option>' + airportName + ' (' + airportCode + ") , " + airportCountry + '</option>');
+    $('#destinationAutocomplete').append('<option value="' + airportCode +'">' + airportName + ' (' + airportCode + ") , " + airportCountry + '</option>');
     }
  
 }
 
+
+
 // search for flights using Google flights
+
+ $('body').on('click', '#fly-button', function(){
+  var originInputValue = $('#origin').val();
+  var destinationInputValue = $('#destination').val();
+  var dateInputValue = $('#datepicker').val();
+  var request = $.ajax({
+    url: 'https://www.googleapis.com/qpxExpress/v1/trips/search?key=AIzaSyDu3gjh4psHcCnMHJYhew2EebBb3I_jdAQ',
+    type: "POST",
+    data: JSON.stringify({
+     "request": {
+       "slice": [
+        {
+          "origin": originInputValue,
+          "destination": destinationInputValue,
+          "date": dateInputValue
+        }
+      ],
+      "passengers": {
+        "adultCount": 1,
+        "infantInLapCount": 0,
+        "infantInSeatCount": 0,
+        "childCount": 0,
+        "seniorCount": 0
+      },
+      "solutions": 6,
+      "refundable": false
+    }
+  }),
+  contentType: 'application/json',
+  success: appendFlights
+  });
+
+ });
+
+ var appendFlights = function(data) {
+    for (var i = 0; i < 3; i ++) {
+      var flightData = data.trips.tripOption[i];
+      var flightObj = {
+        price: flightData.saleTotal,
+        airlineCode: data.trips.data.carrier[i].code,
+        airline: data.trips.data.carrier[i].name,
+        departureTime: flightData.slice[0].segment[0].leg[0].departureTime,
+        arrivalTime: flightData.slice[0].segment[0].leg[0].departureTime
+      };
+      var flightHtml = compileHtml(flightObj);
+      $('#flight-info').append(flightHtml);
+    }
+
+ }
+
+
+
 
 
 

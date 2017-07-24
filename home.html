@@ -7,6 +7,22 @@
 		<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/jquery.slick/1.6.0/slick.css"/>
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 		 <link rel="stylesheet" href="css/main.css">
+		<link rel="stylesheet" href="datepicker/css/datepicker.css">
+		<link rel="stylesheet/less" type="text/css" href="datepicker/less/datepicker.less">
+
+		<!-- Begin Flight Template -->
+		<script id="flights-template" type="text/x-handlebars-template">
+			<div class="grid-item">
+				<img class="airline-logo" src="images/{{{airlineCode}}}.png">
+				<ul>
+			    	<li><i class="fa fa-usd fa-2x" aria-hidden="true"></i><span>{{{price}}}</span></li>
+			     	<li><i class="fa fa-plane fa-2x" aria-hidden="true"></i><span>{{{airline}}}</span></li>
+			    	<li><i class="fa fa-clock-o fa-2x" aria-hidden="true"></i><span>Time: {{{departureTime}}} <------> {{{arrivalTime}}}</span></li>
+				</ul>
+				<button>Book</button>
+			</div>
+		</script>
+		<!-- end Handlebars template -->
 
 
 
@@ -29,85 +45,26 @@
   
   					</div>
   				<h1> Where will you go? </h1>
-				<input placeholder="FROM" type="text" id='origin' list="originAutocomplete"></input>
+				<input placeholder="FROM" type="text" id='origin' list="originAutocomplete" data-originCode=""></input>
 				<datalist id="originAutocomplete">
 				
 				</datalist>
-				<input placeholder="TO" id="destination" list="destinationAutocomplete"></input>
+				<input placeholder="TO" id="destination" list="destinationAutocomplete" data-originCode=""></input>
 				<datalist id="destinationAutocomplete">
 				
 				</datalist>
-				<input id="date" type="date"></input>
+				<input type="date" class="datepicker" id="datepicker"></input>
 				<button type="button" id="fly-button">Let's Fly!</button>
 
 			</div>
 
-		<div class="destination-info">
-			<h1 class="city-name">Boston, MA</h1>
-		</div>
-		<div>
-			<h2> Flights </h2>
-		</div>
-		<div class="l-wrap flights">
-		  <div class="three-col-grid">
-		    <div class="grid-item">
-			    <img class="airline-logo" src="images/jetblue.png">
-			    <ul>
-	    			<li><i class="fa fa-usd fa-2x" aria-hidden="true"></i><span>500</span></li>
-	     			<li><i class="fa fa-plane fa-2x" aria-hidden="true"></i><span> American Airlines</span></li>
-	    			<li><i class="fa fa-clock-o fa-2x" aria-hidden="true"></i><span>5:35 <------> 7:30</span></li>
-					</ul>
-				<button>Book</button>
-				</div>
-		    <div class="grid-item">
-			    	<img class="airline-logo" src="images/AA.png">
-			    <ul>
-	    			<li><i class="fa fa-usd fa-2x" aria-hidden="true"></i><span>500</span></li>
-	     			<li><i class="fa fa-plane fa-2x" aria-hidden="true"></i><span> American Airlines</span></li>
-	    			<li><i class="fa fa-clock-o fa-2x" aria-hidden="true"></i><span>Time: 5:35 <------> 7:30</span></li>
-				</ul>
-					<button>Book</button>
-				</div>
-		    <div class="grid-item">
-			    	<img class="airline-logo" src="images/united.png">
-			    <ul>
-	    			<li><i class="fa fa-usd fa-2x" aria-hidden="true"></i> <span>500</span></li>
-	     			<li><i class="fa fa-plane fa-2x" aria-hidden="true"></i> <span> American Airlines</span></li>
-	    			<li><i class="fa fa-clock-o fa-2x" aria-hidden="true"></i><span>Time: 5:35 <------> 7:30</span></li>
-					</ul>
-				<button>Book</button>
-				</div>
-		</div>
-			<div class="three-col-grid">
-			    <div class="grid-item">
-				    <img class="airline-logo" src="images/jetblue.png">
-				    <ul>
-		    			<li><i class="fa fa-usd fa-2x" aria-hidden="true"></i><span>500</span></li>
-		     			<li><i class="fa fa-plane fa-2x" aria-hidden="true"></i><span> American Airlines</span></li>
-		    			<li><i class="fa fa-clock-o fa-2x" aria-hidden="true"></i><span>Time: 5:35 <------> 7:30</span></li>
-						</ul>
-					<button>Book</button>
-					</div>
-			    <div class="grid-item">
-				    	<img class="airline-logo" src="images/AA.png">
-				    <ul>
-		    			<li><i class="fa fa-usd fa-2x" aria-hidden="true"></i><span>500</span></li>
-		     			<li><i class="fa fa-plane fa-2x" aria-hidden="true"></i><span> American Airlines</span></li>
-		    			<li><i class="fa fa-clock-o fa-2x" aria-hidden="true"></i><span>Time: 5:35 <------> 7:30</span></li>
-					</ul>
-						<button>Book</button>
-					</div>
-		    	<div class="grid-item">
-			    		<img class="airline-logo" src="images/united.png">
-			    	<ul>
-	    				<li><i class="fa fa-usd fa-2x" aria-hidden="true"></i> <span>500</span></li>
-	     				<li><i class="fa fa-plane fa-2x" aria-hidden="true"></i> <span> American Airlines</span></li>
-	    				<li><i class="fa fa-clock-o fa-2x" aria-hidden="true"></i><span>Time: 5:35 <------> 7:30</span></li>
-					</ul>
-						<button>Book</button>
-				</div>
-		  	</div>	
+
+
+
+		<div class="l-wrap flights">	
+		  	<div class="three-col-grid" id="flight-info">
 		  	</div>
+		 </div>
 
 
 		
@@ -121,6 +78,7 @@
   		crossorigin="anonymous"></script>
   		<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.slick/1.6.0/slick.min.js"></script>
 		 <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.10/handlebars.min.js"></script>
+		 <script src="datepicker/js/bootstrap-datepicker.js"></script>
 		 <script src="js/app.js"></script>
 		</footer>
 

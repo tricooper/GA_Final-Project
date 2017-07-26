@@ -2,6 +2,12 @@
 
 'use strict'
 
+$(function () {
+  $("#datepicker").datepicker({ 
+        autoclose: true, 
+        todayHighlight: true,
+  }).datepicker('update', new Date());;
+});
     $(document).ready(function(){
       $('.slick-container').slick({
         autoplay: true,
@@ -9,7 +15,6 @@
         centerPadding: '20px',
         infinite: true,
         slidesToShow: 3,
-        
         arrows: false,
           responsive: [
     {
@@ -127,9 +132,10 @@ var appendDestination = function(data) {
   $('#flight-error').hide();
   var originInputValue = $('#origin').val();
   var destinationInputValue = $('#destination').val();
-  var dateInputValue = $('#datepicker').val();
+  var dateInputValue = yearMonthDay($('#datepicker').val());
+  console.log(dateInputValue);
   var request = $.ajax({
-    url: 'https://www.googleapis.com/qpxExpress/v1/trips/search?key=AIzaSyDu3gjh4psHcCnMHJYhew2EebBb3I_jdAQ',
+    url: 'https://www.googleapis.com/qpxExpress/v1/trips/search?key=AIzaSyCd4YKgMx8GYZF5gzytSY1R7y2e8F0o4FM',
     type: "POST",
     data: JSON.stringify({
      "request": {
@@ -218,6 +224,12 @@ var mydate = new Date(date);
 var str = mydate.toString("MMMM dd, yyyy");
 return(str);
   }
+
+var yearMonthDay = function(date) {
+  var mydate = new Date(date);
+  var str = mydate.toString("yyyy-MM-dd");
+  return(str);
+}
 
 
 

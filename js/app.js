@@ -1,5 +1,7 @@
 // initialize slick
 
+'use strict'
+
     $(document).ready(function(){
       $('.slick-container').slick({
         autoplay: true,
@@ -33,36 +35,16 @@
     });
 
 
-// search based on input for lat/long
 
-  //   $('#fly-button').on('click', function() {
-  //   var destination = $('#destination').val();
-  //   $('#destination').val('');
-  //   console.log(destination);
-  //    var request = $.ajax({
-  //     url: 'https://maps.googleapis.com/maps/api/geocode/json?address=' + destination + '&key=AIzaSyDu3gjh4psHcCnMHJYhew2EebBb3I_jdAQ',
-  //     success: appendDestination
-       
-  //    }); 
-  //  });
-
-  //   function appendDestination (data) {
-  //   var latitude = data.results[0].geometry.bounds.northeast.lat;
-  //   var longitude = data.results[0].geometry.bounds.northeast.lng;
-  //   console.log(latitude);
-  //   console.log(longitude);
-  //   $('.geolocation').html('');
-  //   $('.geolocation').append('<div>'+ latitude +'</div>' + longitude);
-
-  // } 
 
 // compile HTML/Handlebars function
-var compileHtml = function (flightsHtml) {
-  var flightTemplate = $('#flights-template').html();
+var compileHtml = function (flightsHtml, templateId) {
+  var flightTemplate = $(templateId).html();
   var flightScript = Handlebars.compile(flightTemplate);
   return flightScript(flightsHtml);
 
 }
+
 
 
 // on Keyup search for a location
@@ -139,6 +121,10 @@ var appendDestination = function(data) {
 // search for flights using Google flights
 
  $('body').on('click', '#fly-button', function(){
+  $('#flight-info').siblings().remove();
+  $('#flight-header').children().remove();
+  $('#fly-button').text('loading flights!');
+  $('#flight-error').hide();
   var originInputValue = $('#origin').val();
   var destinationInputValue = $('#destination').val();
   var dateInputValue = $('#datepicker').val();
@@ -154,38 +140,86 @@ var appendDestination = function(data) {
           "date": dateInputValue
         }
       ],
-      "passengers": {
+        "passengers": {
         "adultCount": 1,
         "infantInLapCount": 0,
         "infantInSeatCount": 0,
         "childCount": 0,
         "seniorCount": 0
       },
-      "solutions": 6,
+      "solutions": 15,
       "refundable": false
     }
   }),
   contentType: 'application/json',
-  success: appendFlights
+  success: appendFlights,
+  error: errorFunction
   });
 
  });
 
  var appendFlights = function(data) {
-    for (var i = 0; i < 3; i ++) {
+    $('#fly-button').text("Let's Fly!");
+
+    // flight-header
+    var origin = $('#origin').val();
+    var destination = $('#destination').val();
+    var date = MonthDayYear($('#datepicker').val());
+    var flightHeaderObj = {
+      origin: origin, 
+      destination: destination,
+      date: date
+    };
+    var flightHeaderHtml = compileHtml(flightHeaderObj, '#flights-header');
+    $('#flight-header').append(flightHeaderHtml);
+
+    for (var i = 0; i < 15; i ++) {
       var flightData = data.trips.tripOption[i];
+      var price = flightData.saleTotal;
+      var priceString = price.substring(3);
+      var depart = flightData.slice[0].segment[0].leg[0].departureTime;
+      var arrive = flightData.slice[0].segment[0].leg[0].arrivalTime;
+      var departureTime = changeDate(depart);
+      var arrivalTime = changeDate(arrive);
       var flightObj = {
-        price: flightData.saleTotal,
-        airlineCode: data.trips.data.carrier[i].code,
-        airline: data.trips.data.carrier[i].name,
-        departureTime: flightData.slice[0].segment[0].leg[0].departureTime,
-        arrivalTime: flightData.slice[0].segment[0].leg[0].departureTime
+        price: priceString,
+        airlineCode: flightData.slice[0].segment[0].flight.carrier,
+        departureTime: departureTime,
+        arrivalTime: arrivalTime
       };
-      var flightHtml = compileHtml(flightObj);
-      $('#flight-info').append(flightHtml);
+      var flightHtml = compileHtml(flightObj, '#flights-template');
+      // if element is divisible, then add 3 column grid
+      if ((i % 3) === 0) {
+        $('.l-wrap').append('<div class="three-col-grid"></div>')
+      }
+      
+      // append element to flight-info + 1
+      $('.three-col-grid').last().append(flightHtml);
     }
 
+
  }
+
+ var errorFunction = function() {
+  $('#fly-button').text("Let's Fly!");
+  $('#flight-error').show();
+ }
+
+// change date format function
+
+var changeDate = function(date) {
+var mydate = new Date(date);
+var str = mydate.toString("MMMM dd, yyyy hh:mm tt");
+return(str);
+  }
+
+var MonthDayYear = function(date) {
+var mydate = new Date(date);
+var str = mydate.toString("MMMM dd, yyyy");
+return(str);
+  }
+
+
 
 
 

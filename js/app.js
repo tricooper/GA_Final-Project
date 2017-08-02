@@ -8,6 +8,7 @@ $(function () {
         todayHighlight: true,
   }).datepicker('update', new Date());;
 });
+
     $(document).ready(function(){
       $('.slick-container').slick({
         autoplay: true,
